@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="download__1_-removebg-preview.png" type="image/png">
+    <title>|Strength Simulator Game|</title>
+    <style>
+        body {
+            background-color: orange;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #game-container {
+            background-color: gray;
+            border-radius: 1cm;
+            border-color: black;
+            font-size: larger;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        #cooldownText {
+            font-size: large;
+        }
+
+        #popup {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 999;
+        }
+
+        #leaderboardList {
+            background-color: gray;
+            border-radius: 1cm;
+            border-color: black;
+            font-size: larger;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        body.popup-open {
+            background-color: gray;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+
+        #achievements {
+            background-color: gray;
+            border-radius: 1cm;
+            border-color: black;
+            text-align: center;
+            font-size: larger;
+        }
+
+        #tips-container {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <div id="popup"></div>
+        <h1>|Strength Simulator Game|</h1>
+        <div id="tips-container">
+            <p id="gameTips-text"></p>
+        </div>
+        <h1>Strength: <span id="strengthGUI">💪 0</span></h1>
+        <h1>Rebirths: <span id="rebirthsGUI">♻️ 0</span></h1>
+        <h1>Level: <span id="levelGUI">0</span></h1>
+        <h1>Exp: <span id="expGUI">???</span></h1>
+        <p><button onclick="openShopBTN()">Open Shop | Save/Load </button></p>
+        <p><button id="cooldownText" onclick="increaseSTR(gainStrClick)">Gain Strength</button></p>
+        <div id="shopPopup" class="popup">
+            <h1>Shop</h1>
+            <p><button onclick="openSTRUpgradesBTN()">Open Strength Upgrades Shop</button></p>
+            <p><button onclick="openREBUpgradesBTN()">Open Rebirths Upgrades Shop</button></p>
+            <p><button onclick="openAutoBTN()">Open Auto Shop</button></p>
+            <p><button onclick="openRanksLeaderboardBTN()">Open Ranks | Leaderboard</button></p>
+            <br>
+            <button onclick="saveDataBTN()">Save Game</button>
+            <button onclick="loadDataBTN()">Load Game</button>
+            <p class="close" onclick="closeShopBTN()">&times;</p>
+        </div>
+        <div id="upgradesPopup" class="popup">
+            <h1>Strength Upgrades</h1>
+            <p><button id="item1Cost" onclick="upgradeSTRCost1()">Buy Strength +1</button></p>
+            <p><button id="item2Cost" onclick="upgradeSTRCost2()">Buy Strength +2</button></p>
+            <p><button id="item3Cost" onclick="upgradeSTRCost3()">Buy Strength +5</button></p>
+            <p><button id="item4Cost" onclick="upgradeSTRCost4()">Buy Strength +25</button></p>
+            <p class="close" onclick="closeSTRUpgradesBTN()">&times;</p>
+        </div>
+        <div id="upgrades2Popup" class="popup">
+            <h1>Rebirths Upgrades</h1>
+            <p><button id="itemReb1Cost" onclick="upgradeRebCost1()">Rebirth 1</button></p>
+            <p><button id="itemReb2Cost" onclick="upgradeRebCost2()">Rebirth 2</button></p>
+            <p><button id="itemReb3Cost" onclick="upgradeRebCost3()">Rebirth 3</button></p>
+            <p class="close" onclick="closeREBUpgradesBTN()">&times;</p>
+        </div>
+        <div id="autoGainPopup" class="popup">
+            <h1>Auto Gain Shop</h1>
+            <p><button id="autoCost" onclick="AutoBTN()">Auto: Off</button></p>
+            <p class="close" onclick="closeAutoBTN()">&times;</p>
+        </div>
+        <div id="ranksPopup-leaderboardPopup" class="popup">
+            <h1>|Leaderboard|</h1>
+            <div id="leaderboard">
+                <h1><span id="user-ID">???</span></h1>
+                <br>
+                <h1><span id="strengthData">???</span></h1>
+            </div>
+            <br>
+            <h1>|Ranks|</h1>
+            <h1 id="rank">Rookie</h1>
+            <p><button onclick="openHowToPlayBTN()">How To Play!</button></p>
+            <p class="close" onclick="closeRanksLeaderboardBTN()">&times;</p>
+        </div>
+    </div>
+    <div id="HowToPlay-container" class="popup">
+        <p class="close" onclick="closeHowToPlayBTN()">&times;</p>
+        <h1>|How To Play|</h1>
+        <p>1: Click The Gain Strength Button to get strength!</p>
+        <p>2: Open Shops to earn more strength!</p>
+        <p>3: adding more stuff soon!</p>
+    </div>
+    <div id="achievements">
+        <p><button onclick="displayOwnedAchievements()">Check Owned Achievements</button></p>
+        <h1>|Achievements|</h1>
+        <ul id="achievementsList"></ul>
+    </div>
+    <script>
+        // Gain system
+        let gainStrClick = 1;
+        let gainExpClick = 1;
+
+        // Leaderstats
+        let Strength = 0;
+        let Rebirths = 0;
+        let level = 0;
+        let maxlevel = 100;
+        let isMaxlevel = false;
+        let exp = 0;
+
+        // buy system
+        let buyUpgrade = false;
+        let buyRebirths = false;
+
+        // exp cost to level up
+        let expRequiredLevelUp = 30;
+
+        // upgrade system
+        let StrengthRequired = 25;
+        let StrengthRequired2 = 100;
+        let StrengthRequired3 = 250;
+        let StrengthRequired4 = 750;
+        let RebirthsRequired = 10000;
+        let RebirthsRequired2 = 50000;
+        let RebirthsRequired3 = 100000;
+
+        // Auto Cost System
+        let auto = false;
+        let autoCostRequired = 1000;
+
+        // cooldown timer 
+        let cooldownTimerNumber = 1
+        let cooldownTime = cooldownTimerNumber;
+        let isBTNcooldown = false;
+        let cooldownTimer;
+
+        // fps system
+        const fps = 30;
+
+        function increaseSTR(value) {
+            if (!isBTNcooldown) {
+                if (!buyRebirths) {
+                    Strength += value;
+                    updateSTRGUI();
+                    updateREBGUI();
+                    gainExp(gainExpClick);
+                    startCooldown();
+                    updateRanks();
+                    updateCheckAchievements();
+                    let playerData = getPlayerData();
+                    document.getElementById('strengthData').innerHTML = playerData;
+                    showPopup(`💪+${formatNumber(value)} Strength`);
+                } else {
+                    Strength += value * Rebirths;
+                    updateSTRGUI();
+                    updateREBGUI();
+                    gainExp(gainExpClick * Rebirths);
+                    startCooldown();
+                    updateRanks();
+                    updateCheckAchievements();
+                    let playerData = getPlayerData();
+                    document.getElementById('strengthData').innerHTML = playerData;
+                    showPopup(`💪+${formatNumber(value * Rebirths)} Strength`);
+                }
+            }
+        }
+        // keybind system
+        document.addEventListener("keydown", function (event) {
+            if (event.keyCode === 71) {
+                if (!buyUpgrade) {
+                    increaseSTR(gainStrClick);
+                } else {
+                    increaseSTR(gainStrClick);
+                }
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.keyCode === 83) {
+                openShopBTN();
+            }
+        });
+
+        // level up system
+        function gainExp(value) {
+            exp += value;
+            updateValues();
+            if (exp >= expRequiredLevelUp) {
+                exp -= expRequiredLevelUp;
+                expRequiredLevelUp += Math.floor(Math.round(expRequiredLevelUp * expMultiplier));
+                levelUp();
+                updateValues();
+            }
+        }
+
+        let expMultiplier = 0;
+        function levelUp() {
+            level++;
+            expMultiplier = 0.1 * level * 2;
+            updateValues();
+            alert(`Level Up! | Your Level ${formatNumber(level)}`);
+        }
+
+        setInterval(function () {
+            if (!isMaxlevel) {
+                if (level >= maxlevel) {
+                    isMaxlevel = true;
+                    alert('You Haved Reached Max Level');
+                    saveData();
+                } else {
+                    isMaxlevel = false;
+                }
+            }
+        }, fps);
+
+        // updates system
+        function updateSTRGUI() {
+            document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+        }
+
+        function updateREBGUI() {
+            document.getElementById('rebirthsGUI').textContent = `♻️ ${formatNumber(Rebirths)}`;
+        }
+
+        function updateGameTitle() {
+            document.title = `${formatNumber(Strength)} - Strength Simulator Game`;
+        }
+
+        setInterval(function () {
+            updateGameTitle();
+        }, fps);
+
+        function updateValues() {
+            document.getElementById('levelGUI').textContent = formatNumber(level);
+            document.getElementById('expGUI').textContent = `${formatNumber(exp)}/` + `${formatNumber(expRequiredLevelUp)}`;
+        }
+
+        function updatePlayerID() {
+            let PlayerIDElement = document.getElementById('user-ID');
+            PlayerIDElement.textContent = `Player Id: ` + PlayerID;
+        }
+        // Upgrade System
+        function upgradeSTRCost1() {
+            const item1Cost = document.getElementById('item1Cost');
+            if (Strength >= StrengthRequired) {
+                Strength -= StrengthRequired;
+                gainStrClick += 1;
+                gainExpClick += 1;
+                buyUpgrade = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                showPopup(`Strength 💪-${formatNumber(StrengthRequired)}`);
+                closeShopBTN();
+                closeSTRUpgradesBTN();
+                item1Cost.textContent = 'Buy Strength +1';
+            } else {
+                buyUpgrade = false;
+                item1Cost.textContent = `Cost: ${formatNumber(StrengthRequired)} Strength`;
+            }
+        }
+
+        function upgradeSTRCost2() {
+            const item2Cost = document.getElementById('item2Cost');
+            if (Strength >= StrengthRequired2) {
+                Strength -= StrengthRequired2;
+                gainStrClick += 2;
+                gainExpClick += 1;
+                buyUpgrade = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                showPopup(`Strength 💪-${formatNumber(StrengthRequired2)}`);
+                closeShopBTN();
+                closeSTRUpgradesBTN();
+                item2Cost.textContent = 'Buy Strength +2';
+            } else {
+                buyUpgrade = false;
+                item2Cost.textContent = `Cost: ${formatNumber(StrengthRequired2)} Strength`;
+            }
+        }
+
+        function upgradeSTRCost3() {
+            const item3Cost = document.getElementById('item3Cost');
+            if (Strength >= StrengthRequired3) {
+                Strength -= StrengthRequired3;
+                gainStrClick += 5;
+                gainExpClick += 1;
+                buyUpgrade = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                showPopup(`Strength 💪-${formatNumber(StrengthRequired3)}`);
+                closeShopBTN();
+                closeSTRUpgradesBTN();
+                item3Cost.textContent = 'Buy Strength +5';
+            } else {
+                buyUpgrade = false;
+                item3Cost.textContent = `Cost: ${formatNumber(StrengthRequired3)} Strength`;
+            }
+        }
+
+        function upgradeSTRCost4() {
+            const item4Cost = document.getElementById('item4Cost');
+            if (Strength >= StrengthRequired4) {
+                Strength -= StrengthRequired4;
+                gainStrClick += 25;
+                gainExpClick += 1;
+                buyUpgrade = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                showPopup(`Strength 💪-${formatNumber(StrengthRequired4)}`);
+                closeShopBTN();
+                closeSTRUpgradesBTN();
+                item4Cost.textContent = 'Buy Strength +25';
+            } else {
+                buyUpgrade = false;
+                item4Cost.textContent = `Cost: ${formatNumber(StrengthRequired4)} Strength`;
+            }
+        }
+
+        function upgradeRebCost1() {
+            const itemReb1Cost = document.getElementById('itemReb1Cost');
+            if (Strength >= RebirthsRequired) {
+                Strength -= RebirthsRequired;
+                Rebirths += 1;
+                gainExpClick += 2;
+                buyRebirths = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                document.getElementById('rebirthsGUI').textContent = `♻️ ${formatNumber(Rebirths)}`;
+                showPopup(`Strength 💪-${formatNumber(RebirthsRequired)}`);
+                closeShopBTN();
+                closeREBUpgradesBTN();
+                itemReb1Cost.textContent = 'Rebirth 1';
+                alert('Success');
+            } else {
+                buyRebirths = false;
+                itemReb1Cost.textContent = `Cost: ${formatNumber(RebirthsRequired)} Strength`;
+            }
+        }
+
+        function upgradeRebCost2() {
+            const itemReb2Cost = document.getElementById('itemReb2Cost');
+            if (Strength >= RebirthsRequired2) {
+                Strength -= RebirthsRequired2;
+                Rebirths += 2;
+                gainExpClick += 5;
+                buyRebirths = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                document.getElementById('rebirthsGUI').textContent = `♻️ ${formatNumber(Rebirths)}`;
+                showPopup(`Strength 💪-${formatNumber(RebirthsRequired2)}`);
+                closeShopBTN();
+                closeREBUpgradesBTN();
+                itemReb2Cost.textContent = 'Rebirth 2';
+                alert('Success');
+            } else {
+                buyRebirths = false;
+                itemReb2Cost.textContent = `Cost: ${formatNumber(RebirthsRequired2)} Strength`;
+            }
+        }
+
+        function upgradeRebCost3() {
+            const itemReb3Cost = document.getElementById('itemReb3Cost');
+            if (Strength >= RebirthsRequired3) {
+                Strength -= RebirthsRequired3;
+                Rebirths += 5;
+                gainExpClick += 5;
+                buyRebirths = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                document.getElementById('rebirthsGUI').textContent = `♻️ ${formatNumber(Rebirths)}`;
+                showPopup(`Strength 💪-${formatNumber(RebirthsRequired3)}`);
+                closeShopBTN();
+                closeREBUpgradesBTN();
+                itemReb3Cost.textContent = 'Rebirth 3';
+                alert('Success');
+            } else {
+                buyRebirths = false;
+                itemReb3Cost.textContent = `Cost: ${formatNumber(RebirthsRequired3)} Strength`;
+            }
+        }
+
+        // Auto System
+        function AutoBTN() {
+            const autoCost = document.getElementById('autoCost');
+            if (!auto) {
+                if (Strength >= autoCostRequired) {
+                    Strength -= autoCostRequired;
+                    auto = true;
+                    showPopup(`Strength -${formatNumber(autoCostRequired)}`);
+                    document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                    autoOn();
+                } else {
+                    auto = false;
+                    autoCost.textContent = `Cost: ${formatNumber(autoCostRequired)} Strength`;
+                    alert('Not Enough Strength!');
+                }
+            }
+        }
+        // auto on | auto off text
+        function autoOn() {
+            const autoCost = document.getElementById('autoCost');
+            if (auto == true) {
+                autoCost.textContent = 'Auto: On';
+                setInterval(function () {
+                    Strength += gainStrClick;
+                    exp += gainExpClick;
+                    levelUp();
+                    updateValues();
+                    document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                }, 1000);
+            } else {
+                autoCost.textContent = 'Auto: Off';
+            }
+        }
+
+        function startCooldown() {
+            isBTNcooldown = true;
+            updatecooldownText();
+
+            cooldownTimer = setInterval(function () {
+                cooldownTime--;
+
+                if (cooldownTime <= 0) {
+                    clearInterval(cooldownTimer);
+                    isBTNcooldown = false;
+                    cooldownTime = cooldownTimerNumber;
+                    updatecooldownText()
+                } else {
+                    updatecooldownText()
+                }
+            }, 1000);
+        }
+
+        function updatecooldownText() {
+            const btnCooldowntext = document.getElementById('cooldownText');
+            if (isBTNcooldown) {
+                btnCooldowntext.textContent = `Cooldown: ${cooldownTime}s`;
+            } else {
+                btnCooldowntext.textContent = 'Gain Strength';
+            }
+        }
+        function updateCheckAchievements() {
+            checkAchievements();
+        }
+
+        setInterval(function () {
+            checkAchievements();
+        }, fps);
+
+        // rank System
+        function updateRanks() {
+            const rankElement = document.getElementById('rank');
+            const rank = calculateRanks(Strength);
+            rankElement.textContent = rank;
+        }
+
+        function calculateRanks(number) {
+            if (Strength >= 100) {
+                return 'Lifter';
+            } else if (Strength >= 500) {
+                return 'Huge';
+            } else if (Strength >= 1500) {
+                return 'Tank';
+            } else if (Strength >= 3000) {
+                return 'Beast';
+            } else if (Strength >= 5000) {
+                return 'Gigantic';
+            } else if (Strength >= 8000) {
+                return 'Monster';
+            } else if (Strength >= 12000) {
+                return 'Colossal';
+            } else if (Strength >= 18000) {
+                return 'Master Lifter';
+            } else if (Strength >= 25000) {
+                return 'Master Legend';
+            } else if (Strength >= 75000) {
+                return 'Poop Legend';
+            } else if (Strength >= 125000) {
+                return 'Master Poop Legend';
+            } else {
+                return 'Rookie';
+            }
+        }
+
+        // Format System
+        function formatNumber(number) {
+            const suffixes = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'Non', 'Dec', 'Und', 'Duo', 'Tre', 'Qua'];
+            let suffixIndex = 0;
+
+            while (number >= 1000 && suffixIndex < suffixes.length - 1) {
+                number /= 1000;
+                suffixIndex++;
+            }
+
+            const roundedNumber = Math.round(number * 100) / 100; // Round to two decimal places
+
+            return roundedNumber.toLocaleString() + suffixes[suffixIndex];
+        }
+        // tips system
+        let gameCodes = formatNumber(811);
+        let gameTips = [
+            'Game Tip 1: Do You Know there are ' + gameCodes + ' codes!',
+            'Game Tip 2: Enjoy The game!',
+            'Game Tip 3: Stay Tuned For More Updates!',
+            'Game Tip 4: Go Subscribe To RexSkatess & Goldust24k!',
+            'Game Tip 5: Click The (Gain Strengh Button) to get strength!',
+        ];
+
+        function displayGameTips() {
+            let gameTipsContainer = document.getElementById('gameTips-text');
+            let getRandomTips = Math.floor(Math.random() * gameTips.length);
+
+            gameTipsContainer.textContent = gameTips[getRandomTips];
+        }
+        setInterval(displayGameTips, 5000);
+
+        // user id system
+        let PlayerID = `(` + Math.floor(Math.random() * 1000) + `)`;
+        function createPlayerID() {
+            let PlayerIDElement = document.getElementById('user-ID');
+
+            PlayerIDElement.textContent = `Player Id: ` + PlayerID;
+        }
+
+
+        // Achievements System
+        let ownedAchievements = {};
+
+        let achievements = {
+            '💪 Gain 1 Strength': { strengthReq: 1, description: '✔️', unlocked: false },
+            '💪 Gain 10 Strength': { strengthReq: 10, description: '✔️', unlocked: false },
+            '💪 Gain 50 strength': { strengthReq: 50, description: '✔️', unlocked: false },
+            '💪 Gain 250 strength': { strengthReq: 250, description: '✔️', unlocked: false },
+            '💪 Gain 500 strength': { strengthReq: 500, description: '✔️', unlocked: false },
+            '💪 Gain 2,500 strength': { strengthReq: 2500, description: '✔️', unlocked: false },
+            '💪 Gain 7,500 strength': { strengthReq: 7500, description: '✔️', unlocked: false },
+            '💪 Gain 10,000 strength': { strengthReq: 10000, description: '✔️', unlocked: false },
+            '💪 Gain 25,000 strength': { strengthReq: 25000, description: '✔️', unlocked: false },
+            '💪 Gain 50,000 strength': { strengthReq: 50000, description: '✔️', unlocked: false },
+            '💪 Gain 75,000 strength': { strengthReq: 75000, description: '✔️', unlocked: false },
+            '💪 Gain 100,000 strength': { strengthReq: 100000, description: '✔️', unlocked: false },
+            '💪 Gain 250,000 strength': { strengthReq: 250000, description: '✔️', unlocked: false },
+            '💪 Gain 500,000 strength': { strengthReq: 500000, description: '✔️', unlocked: false },
+            '💪 Gain 750,000 strength': { strengthReq: 750000, description: '✔️', unlocked: false },
+            '💪 Gain 1,000,000 strength': { strengthReq: 1000000, description: '✔️', unlocked: false },
+            '💪 Gain 2,500,000 strength': { strengthReq: 2500000, description: '✔️', unlocked: false },
+            '💪 Gain 5,000,000 strength': { strengthReq: 5000000, description: '✔️', unlocked: false },
+            '💪 Gain 7,500,000 strength': { strengthReq: 7500000, description: '✔️', unlocked: false },
+
+        };
+
+        function checkAchievements() {
+            for (const achievement in achievements) {
+                if (Strength >= achievements[achievement].strengthReq && !achievements[achievement].unlocked) {
+                    achievements[achievement].unlocked = true;
+                    showPopup(`Achievement Unlocked: ${achievement}`);
+                    updateAchievementsDisplay();
+                    ownedAchievements[achievement] = true;
+                }
+            }
+        }
+
+        function updateAchievementsDisplay() {
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+
+            for (const achievement in achievements) {
+                const listItem = document.createElement('h3');
+                listItem.textContent = achievements[achievement].unlocked
+                    ? `${achievement} - ${achievements[achievement].description}`
+                    : `${achievement} - ❌`;
+                achievementsList.appendChild(listItem);
+            }
+        }
+
+        function displayOwnedAchievements() {
+            const ownedAchievementsList = Object.keys(ownedAchievements);
+            alert(`Owned Achievements: ${ownedAchievementsList.join(', ')}`);
+        }
+        // Popup System
+        function showPopup(message) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 5000);
+        }
+        // Save Game | Load Game System
+        function saveData() {
+            if (confirm('Want to save game?')) {
+                if (confirm(`Are you Player: ${PlayerID}`)) {
+                    const savedData = {
+                        Strength: Strength,
+                        Rebirths: Rebirths,
+                        level: level,
+                        maxlevel: maxlevel,
+                        isMaxlevel: isMaxlevel,
+                        expRequiredLevelUp: expRequiredLevelUp,
+                        exp: exp,
+                        auto: auto,
+                        buyUpgrade: buyUpgrade,
+                        buyRebirths: buyRebirths,
+                        autoCostRequired: autoCostRequired,
+                        RebirthsRequired: RebirthsRequired,
+                        RebirthsRequired2: RebirthsRequired2,
+                        RebirthsRequired3: RebirthsRequired3,
+                        StrengthRequired: StrengthRequired,
+                        StrengthRequired2: StrengthRequired2,
+                        StrengthRequired3: StrengthRequired3,
+                        StrengthRequired4: StrengthRequired4,
+                        achievements: achievements,
+                        PlayerID: PlayerID,
+                        gameCodes: gameCodes,
+                    }
+                    showPopup(`Game Saved Successfully!`);
+                    closeShopBTN();
+                    localStorage.setItem('gameData', JSON.stringify(savedData));
+                }
+            }
+        }
+
+        function loadData() {
+            const savedData = localStorage.getItem('gameData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Strength = data.Strength;
+                Rebirths = data.Rebirths;
+                level = data.level;
+                exp = data.exp;
+                maxlevel = data.maxlevel;
+                isMaxlevel = data.isMaxlevel;
+                expRequiredLevelUp = data.expRequiredLevelUp;
+                auto = data.auto;
+                buyUpgrade = data.buyUpgrade;
+                buyRebirths = data.buyRebirths;
+                autoCostRequired = data.autoCostRequired;
+                RebirthsRequired = data.RebirthsRequired;
+                RebirthsRequired2 = data.RebirthsRequired2;
+                RebirthsRequired3 = data.RebirthsRequired3;
+                StrengthRequired = data.StrengthRequired;
+                StrengthRequired2 = data.StrengthRequired2;
+                StrengthRequired3 = data.StrengthRequired3;
+                StrengthRequired4 = data.StrengthRequired4;
+                achievements = data.achievements;
+                PlayerID = data.PlayerID;
+                gameCodes = data.gameCodes;
+                updateSTRGUI();
+                updateREBGUI();
+                updateValues();
+                closeShopBTN();
+                updatePlayerID();
+                displayGameTips();
+                updateAchievementsDisplay();
+                showPopup(`Game Loaded Successfully!`);
+            } else {
+                showPopup('No Saved Data Found.');
+                saveData();
+            }
+        }
+
+        function removeData() {
+            localStorage.removeItem('gameData');
+            showPopup(`Your Data Has Been Cleared!`);
+        }
+
+        function getPlayerData() {
+            if (PlayerID == PlayerID) {
+                return `Player Id: ${PlayerID} | ` + `Score: 💪 ${formatNumber(Strength)} | ` + `♻️ ${formatNumber(Rebirths)}`;
+            }
+        }
+
+        // Button Function System
+        function openShopBTN() {
+            document.getElementById('shopPopup').style.display = 'block';
+            document.body.classList.add('popup-open');
+        }
+
+        function openRanksLeaderboardBTN() {
+            let playerData = getPlayerData();
+            document.getElementById('strengthData').innerHTML = playerData;
+            document.getElementById('ranksPopup-leaderboardPopup').style.display = 'block';
+            document.body.classList.add('popup-open');
+        }
+
+        function openAutoBTN() {
+            document.getElementById('autoGainPopup').style.display = 'block';
+            document.body.classList.add('popup-open');
+        }
+
+
+        function openSTRUpgradesBTN() {
+            document.getElementById('upgradesPopup').style.display = 'block';
+            document.body.classList.add('popup-open');
+        }
+
+        function openREBUpgradesBTN() {
+            document.getElementById('upgrades2Popup').style.display = 'block';
+            document.body.classList.add('popup-open');
+        }
+
+        function openHowToPlayBTN() {
+            document.getElementById('HowToPlay-container').style.display = 'block';
+            document.body.classList.add('popup-open');
+        }
+
+        function closeShopBTN() {
+            document.getElementById('shopPopup').style.display = 'none';
+            document.body.classList.remove('popup-open');
+        }
+
+        function closeAutoBTN() {
+            document.getElementById('autoGainPopup').style.display = 'none';
+        }
+
+        function closeSTRUpgradesBTN() {
+            document.getElementById('upgradesPopup').style.display = 'none';
+        }
+
+        function closeREBUpgradesBTN() {
+            document.getElementById('upgrades2Popup').style.display = 'none';
+        }
+
+        function closeRanksLeaderboardBTN() {
+            document.getElementById('ranksPopup-leaderboardPopup').style.display = 'none';
+        }
+
+        function closeHowToPlayBTN() {
+            document.getElementById('HowToPlay-container').style.display = 'none';
+        }
+
+        function saveDataBTN() {
+            saveData();
+        }
+
+        function loadDataBTN() {
+            loadData();
+        }
+
+
+        loadData();
+        displayGameTips();
+        createPlayerID();
+        updateRanks();
+        getPlayerData();
+    </script>
+</body>
+
+</html>
