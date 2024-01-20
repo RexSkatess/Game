@@ -128,6 +128,7 @@
             <p><button id="itemReb1Cost" onclick="upgradeRebCost1()">Rebirth 1</button></p>
             <p><button id="itemReb2Cost" onclick="upgradeRebCost2()">Rebirth 2</button></p>
             <p><button id="itemReb3Cost" onclick="upgradeRebCost3()">Rebirth 3</button></p>
+            <p><button id="itemReb4Cost" onclick="upgradeRebCost4()">Rebirth 4</button></p>
             <p class="close" onclick="closeREBUpgradesBTN()">&times;</p>
         </div>
         <div id="autoGainPopup" class="popup">
@@ -189,6 +190,7 @@
         let RebirthsRequired = 10000;
         let RebirthsRequired2 = 50000;
         let RebirthsRequired3 = 100000;
+        let RebirthsRequired4 = 250000;
 
         // Auto Cost System
         let auto = false;
@@ -438,6 +440,26 @@
             }
         }
 
+        function upgradeRebCost4() {
+            const itemReb4Cost = document.getElementById('itemReb4Cost');
+            if (Strength >= RebirthsRequired4) {
+                Strength -= RebirthsRequired4;
+                Rebirths += 25;
+                gainExpClick += 25;
+                buyRebirths = true;
+                document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
+                document.getElementById('rebirthsGUI').textContent = `♻️ ${formatNumber(Rebirths)}`;
+                showPopup(`Strength 💪-${formatNumber(RebirthsRequired4)}`);
+                closeShopBTN();
+                closeREBUpgradesBTN();
+                itemReb4Cost.textContent = 'Rebirth 3';
+                alert('Success');
+            } else {
+                buyRebirths = false;
+                itemReb4Cost.textContent = `Cost: ${formatNumber(RebirthsRequired4)} Strength`;
+            }
+        }
+
         // Auto System
         function AutoBTN() {
             const autoCost = document.getElementById('autoCost');
@@ -463,10 +485,15 @@
                 setInterval(function () {
                     Strength += gainStrClick;
                     exp += gainExpClick;
-                    levelUp();
+                    if (exp >= expRequiredLevelUp) {
+                        exp -= expRequiredLevelUp;
+                        expRequiredLevelUp += Math.floor(Math.round(expRequiredLevelUp * expMultiplier));
+                        levelUp();
+                        updateValues();
+                    }
                     updateValues();
                     document.getElementById('strengthGUI').textContent = `💪 ${formatNumber(Strength)}`;
-                }, 1000);
+                }, 2000);
             } else {
                 autoCost.textContent = 'Auto: Off';
             }
@@ -556,7 +583,7 @@
             return roundedNumber.toLocaleString() + suffixes[suffixIndex];
         }
         // tips system
-        let gameCodes = formatNumber(811);
+        let gameCodes = formatNumber(837);
         let gameTips = [
             'Game Tip 1: Do You Know there are ' + gameCodes + ' codes!',
             'Game Tip 2: Enjoy The game!',
@@ -663,7 +690,8 @@
                         autoCostRequired: autoCostRequired,
                         RebirthsRequired: RebirthsRequired,
                         RebirthsRequired2: RebirthsRequired2,
-                        RebirthsRequired3: RebirthsRequired3,
+                        RebirthsRequired3: RebirthsRequired3,                      
+                        RebirthsRequired4: RebirthsRequired4,
                         StrengthRequired: StrengthRequired,
                         StrengthRequired2: StrengthRequired2,
                         StrengthRequired3: StrengthRequired3,
@@ -697,6 +725,7 @@
                 RebirthsRequired = data.RebirthsRequired;
                 RebirthsRequired2 = data.RebirthsRequired2;
                 RebirthsRequired3 = data.RebirthsRequired3;
+                RebirthsRequired4 = data.RebirthsRequired4;
                 StrengthRequired = data.StrengthRequired;
                 StrengthRequired2 = data.StrengthRequired2;
                 StrengthRequired3 = data.StrengthRequired3;
